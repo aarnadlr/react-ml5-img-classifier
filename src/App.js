@@ -8,6 +8,7 @@ const App = () => {
 
   const [predictionsArr, setPredictionsArr] = useState([]);
   const [imageURL, setImageURl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputRef = useRef();
 
@@ -31,6 +32,7 @@ const App = () => {
       .then(results => {
         // Set the predictions in the state
         setPredictionsArr(results);
+            setIsLoading(false);
       });
   };
 
@@ -48,7 +50,9 @@ const App = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
+    setIsLoading(true);
     classifyImg();
+
   };
 
   const handleInputChange = e => {
@@ -79,7 +83,7 @@ const App = () => {
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="image-to-identify">
-          Type in an image URL to identify
+          Type/paste in an image URL to identify
         </label>
 
         <input
@@ -95,22 +99,32 @@ const App = () => {
         <button type="submit">SUBMIT</button>
       </form>
 
-      <img
-        src={'https://cors-anywhere.herokuapp.com/' + imageURL}
-        id="image"
-        width="400"
-        crossOrigin="anonymous"
-        alt=""
-      />
-
-      {predictionsArr.length > 0 ? (
-        predictions
-      ) : (
-        <>
+      {
+        isLoading
+        ?
+                  <>
           <div className="loader" />
           <p>🤖Parsing image...🖼</p>
         </>
-      )}
+          :
+          null
+      }
+      <img
+        crossOrigin="anonymous"
+        src={'https://cors-anywhere.herokuapp.com/' + imageURL}
+        id="image"
+        width="300"
+        alt=""
+      />
+
+
+
+      {predictionsArr.length > 0
+        ?
+        predictions
+       :
+null
+      }
     </div>
   );
 };
