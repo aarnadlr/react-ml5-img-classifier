@@ -7,8 +7,9 @@ const App = () => {
   const kith = 'https://aaronadler.com/static/kith-rect.jpg';
 
   const [predictionsArr, setPredictionsArr] = useState([]);
-  const [imageURL, setImageURl] = useState('');
+  const [imageURL, setImageURL] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
 
   const inputRef = useRef();
 
@@ -56,8 +57,34 @@ const App = () => {
   };
 
   const handleInputChange = e => {
-    setImageURl(e.target.value);
+    setIsSubmitDisabled(false);
+    setImageURL(e.target.value);
   };
+
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+
+
+  const handleLoadRandom = ()=>{
+
+    // setImageURL('');
+
+      setImageURL(`https://source.unsplash.com/random/400x400?sig=${getRandomInt(20)}`);
+
+    setIsLoading(true);
+
+    setTimeout( ()=>{
+      classifyImg();
+    }, 300);
+
+      // setImageURL('https://source.unsplash.com/random/300x300/');
+  };
+
+
+
+    //`https://source.unsplash.com/random/800x800/?${topic}`
+
 
   let predictions = predictionsArr.map((pred, i) => {
     // round the probability with 2 decimal
@@ -96,8 +123,23 @@ const App = () => {
           // id=""
         />
 
-        <button type="submit">SUBMIT</button>
+        <button disabled={isSubmitDisabled} type="submit">SUBMIT</button>
       </form>
+      {/*<br/>*/}
+      {/*<br/>*/}
+
+      <p>OR tap below to load an image from the unsplash API:</p>
+
+      <button onClick={handleLoadRandom} type="button">LOAD RANDOM IMAGE</button>
+
+      <img
+        crossOrigin="anonymous"
+        src={'https://cors-anywhere.herokuapp.com/' + imageURL}
+        id="image"
+        width="300"
+        alt=""
+      />
+
 
       {
         isLoading
@@ -109,13 +151,8 @@ const App = () => {
           :
           null
       }
-      <img
-        crossOrigin="anonymous"
-        src={'https://cors-anywhere.herokuapp.com/' + imageURL}
-        id="image"
-        width="300"
-        alt=""
-      />
+
+
 
 
 
