@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import tiger from './img/tiger.jpg';
+// import tiger from './img/tiger.jpg';
 import * as ml5 from 'ml5';
 
 const App = () => {
+  const kith = 'https://aaronadler.com/static/kith-rect.jpg';
+
   const [predictionsArr, setPredictionsArr] = useState([]);
+  const [imageURL, setImageURl] = useState('');
+
+  const inputRef = useRef();
 
   const classifyImg = () => {
     // Initialize the Image Classifier method with MobileNet
@@ -29,9 +34,26 @@ const App = () => {
       });
   };
 
+  const inputStyle = {
+    width: '400px',
+    height: '30px',
+    fontSize: '20px',
+    padding: '0 4px'
+  };
+
   useEffect(() => {
-    classifyImg();
+    // classifyImg();
+    inputRef.current.focus();
   }, []);
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    classifyImg();
+  };
+
+  const handleInputChange = e => {
+    setImageURl(e.target.value);
+  };
 
   let predictions = predictionsArr.map((pred, i) => {
     // round the probability with 2 decimal
@@ -44,15 +66,42 @@ const App = () => {
         <p>
           Prediction {i + 1}: {pred.label}
         </p>
-        <p>Confidence: {  Math.floor(pred.confidence * 10000) / 100  }%</p>
+        <p>Confidence: {Math.floor(pred.confidence * 10000) / 100}%</p>
       </div>
     );
   });
 
   return (
     <div className="App">
-      <h1>Image classification with ML5.js</h1>
-      <img src={tiger} id="image" width="400" alt="" />
+      <h1>ML image recognition with ML5.js</h1>
+      {/*<img src={tiger} id="image" width="400" alt="" />*/}
+
+
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="image-to-identify">
+          Type in an image URL to identify
+        </label>
+
+        <input
+          ref={inputRef}
+          value={imageURL}
+          style={inputStyle}
+          type="text"
+          name="image-to-identify"
+          onChange={handleInputChange}
+          // id=""
+        />
+
+        <button type="submit">SUBMIT</button>
+      </form>
+
+      <img
+        src={'https://cors-anywhere.herokuapp.com/' + imageURL}
+        id="image"
+        width="400"
+        crossOrigin="anonymous"
+        alt=""
+      />
 
       {predictionsArr.length > 0 ? (
         predictions
