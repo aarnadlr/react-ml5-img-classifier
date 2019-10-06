@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
-import tiger from "./img/tiger.jpg";
-// Importing ml5.js as ml5
-import * as ml5 from "ml5";
+import tiger from './img/tiger.jpg';
+import * as ml5 from 'ml5';
 
 class App extends Component {
 
+  //1
   state = {
-    predictions: []  // Set the empty array predictions state
-  }
+    predictionsArr: []
+  };
 
-  setPredictions = (pred) => {
+  setPredictions = pred => {
     // Set the prediction state with the model predictions
     this.setState({
-      predictions: pred
+      predictionsArr: pred
     });
-     debugger;
-  }
+  };
 
   classifyImg = () => {
     // Initialize the Image Classifier method with MobileNet
@@ -28,48 +27,46 @@ class App extends Component {
     // Put the image to classify inside a variable
     const image = document.getElementById('image');
     // Make a prediction with a selected image
-    classifier.predict(image, function(err, results) {
-    // Return the results
-      return results;
-    })
-      .then((results) => {
-        // Set the predictions in the state
-        this.setPredictions(results)
+    classifier
+      .predict(image, 3, function(err, results) {
+        // Return the results
+        return results;
       })
+      .then(results => {
+        // Set the predictions in the state
+        this.setPredictions(results);
+      });
+  };
 
-  }
-
-  componentDidMount(){
+  componentDidMount() {
     // once the component has mount, start the classification
     this.classifyImg();
-
   }
 
   render() {
     // First set the predictions to a default value while loading
-    let predictions = (<div className="loader"></div>);
+    let predictions = <div className="loader"></div>;
     // Map over the predictions and return each prediction with probability
-    if(this.state.predictions.length > 0){
-      predictions = this.state.predictions.map((pred, i) => {
+    if (this.state.predictionsArr.length > 0) {
+      predictions = this.state.predictionsArr.map((pred, i) => {
 
-       // let { className, probability } = pred;
+        // let { className, probability } = pred;
         // round the probability with 2 decimal
         // probability = Math.floor(probability * 10000) / 100 + "%";
 
         return (
-          <div key={ i + "" }>{ i+1 }. Prediction: {JSON.stringify(pred)} </div>
-        )
-
-
-      })
+          <div key={i + ''}>
+            {i + 1}. Prediction: {JSON.stringify(pred)}{' '}
+          </div>
+        );
+      });
     }
-
 
     return (
       <div className="App">
-      <h1>Image classification with ML5.js</h1>
-      <img src={ tiger } id="image" width="400" alt="" />
-      { predictions }
+        <h1>Image classification with ML5.js</h1>
+        <img src={tiger} id="image" width="400" alt="" />
+        {predictions}
       </div>
     );
   }
