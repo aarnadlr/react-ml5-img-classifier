@@ -33,33 +33,35 @@ const App = () => {
     classifyImg();
   }, []);
 
-  // First set the predictions to a default value while loading
+  let predictions = predictionsArr.map((pred, i) => {
+    // round the probability with 2 decimal
+    // probability = Math.floor(probability * 10000) / 100 + "%";
 
+    return (
+      // Please wait a few seconds as the image is parsed
 
-  let predictions = <div className="loader"/>;
-
-
-  // Map over the predictions and return each prediction with probability
-  if (predictionsArr.length > 0) {
-    predictions = predictionsArr.map((pred, i) => {
-
-      // round the probability with 2 decimal
-      // probability = Math.floor(probability * 10000) / 100 + "%";
-      return (
-        // Please wait a few seconds as the image is parsed
-
-        <div key={i + ''}>
-          {i + 1}. Prediction: {JSON.stringify(pred)}{' '}
-        </div>
-      );
-    });
-  }
+      <div key={i}>
+        <p>
+          Prediction {i + 1}: {pred.label}
+        </p>
+        <p>Confidence: {  Math.floor(pred.confidence * 10000) / 100  }%</p>
+      </div>
+    );
+  });
 
   return (
     <div className="App">
       <h1>Image classification with ML5.js</h1>
       <img src={tiger} id="image" width="400" alt="" />
-      {predictions}
+
+      {predictionsArr.length > 0 ? (
+        predictions
+      ) : (
+        <>
+          <div className="loader" />
+          <p>🤖Parsing image...🖼</p>
+        </>
+      )}
     </div>
   );
 };
