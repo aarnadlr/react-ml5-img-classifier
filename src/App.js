@@ -4,16 +4,16 @@ import './App.css';
 import * as ml5 from 'ml5';
 
 const App = () => {
-  const kith = 'https://aaronadler.com/static/kith-rect.jpg';
 
   const [predictionsArr, setPredictionsArr] = useState([]);
   const [imageURL, setImageURL] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const inputRef = useRef();
 
   const classifyImg = () => {
+    // ML5 1
     // Initialize the Image Classifier method with MobileNet
     const classifier = ml5.imageClassifier('MobileNet', modelLoaded);
     // When the model is loaded
@@ -24,9 +24,11 @@ const App = () => {
     // Put the image to classify inside a variable
     const image = document.getElementById('image');
 
+    // ML5 2
     // Make a prediction with a selected image
     classifier
-      .predict(image, 3, function(err, results) {
+      // .predict(image, 3, function(err, results) {
+      .classify(image, 3, function(err, results) {
         // Return the results
         return results;
       })
@@ -45,7 +47,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    // classifyImg();
     inputRef.current.focus();
   }, []);
 
@@ -53,7 +54,6 @@ const App = () => {
     e.preventDefault();
     setIsLoading(true);
     classifyImg();
-
   };
 
   const handleInputChange = e => {
@@ -68,9 +68,7 @@ const App = () => {
 
   const handleLoadRandom = ()=>{
 
-    // setImageURL('');
-
-      setImageURL(`https://source.unsplash.com/random/400x400?sig=${getRandomInt(20)}`);
+    setImageURL(`https://source.unsplash.com/random/400x400?sig=${getRandomInt(10)}`);
 
     setIsLoading(true);
 
@@ -78,21 +76,10 @@ const App = () => {
       classifyImg();
     }, 300);
 
-      // setImageURL('https://source.unsplash.com/random/300x300/');
   };
 
-
-
-    //`https://source.unsplash.com/random/800x800/?${topic}`
-
-
   let predictions = predictionsArr.map((pred, i) => {
-    // round the probability with 2 decimal
-    // probability = Math.floor(probability * 10000) / 100 + "%";
-
     return (
-      // Please wait a few seconds as the image is parsed
-
       <div key={i}>
         <p>
           Prediction {i + 1}: {pred.label}
@@ -105,8 +92,6 @@ const App = () => {
   return (
     <div className="App">
       <h1>ML image recognition with ML5.js</h1>
-      {/*<img src={tiger} id="image" width="400" alt="" />*/}
-
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="image-to-identify">
@@ -120,48 +105,42 @@ const App = () => {
           type="text"
           name="image-to-identify"
           onChange={handleInputChange}
-          // id=""
         />
 
         <button disabled={isSubmitDisabled} type="submit">SUBMIT</button>
       </form>
-      {/*<br/>*/}
-      {/*<br/>*/}
 
-      <p>OR tap below to load an image from the unsplash API:</p>
+      <p>OR tap below to load an image from the Unsplash API:</p>
 
       <button onClick={handleLoadRandom} type="button">LOAD RANDOM IMAGE</button>
 
       <img
         crossOrigin="anonymous"
-        src={'https://cors-anywhere.herokuapp.com/' + imageURL}
+        // src={'https://cors-anywhere.herokuapp.com/' + imageURL}
+        src={imageURL}
         id="image"
         width="300"
         alt=""
       />
 
-
       {
         isLoading
         ?
-                  <>
-          <div className="loader" />
-          <p>🤖Parsing image...🖼</p>
-        </>
+          <>
+            <div className="loader" />
+            <p><span role={'img'}>🤖</span>Parsing image...<span role={'img'}>🖼</span></p>
+          </>
           :
           null
       }
-
-
-
-
 
       {predictionsArr.length > 0
         ?
         predictions
        :
-null
+        null
       }
+
     </div>
   );
 };
